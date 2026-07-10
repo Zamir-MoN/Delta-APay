@@ -30,6 +30,12 @@ export default function Home() {
         body: JSON.stringify({ amount: 1, productId: "test-product-id" }),
       });
       const data = await res.json();
+      
+      if (data.error) {
+        alert("Server Error: " + data.error);
+        return;
+      }
+      
       if (data.order?.id) {
         router.push(`/checkout/${data.order.id}?qr=${encodeURIComponent(data.qrCode)}&amount=${data.order.amount}&purpose=${data.order.purpose}`);
       }

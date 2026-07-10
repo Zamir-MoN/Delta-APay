@@ -82,4 +82,29 @@ router.get('/orders/:id/status', async (req, res) => {
   });
 });
 
+import { processPaymentEmail } from '../services/verification.service';
+
+// Simulate Payment Verification (For Testing)
+router.post('/simulate', async (req, res) => {
+  const { purpose, amount, utr, sender } = req.body;
+  if (!purpose || !amount || !utr) {
+    return res.status(400).json({ error: 'Missing parameters' });
+  }
+
+  const success = await processPaymentEmail({
+    purpose,
+    amount: parseFloat(amount),
+    utr,
+    transactionId: `TEST-${Date.now()}`,
+    sender: sender || 'Test User',
+    date: new Date().toISOString()
+  });
+
+  if (success) {
+    res.json({ success: true, message: 'Order verified successfully' });
+  } else {
+    res.status(400).json({ success: false, error: 'Order not found, already processed, or expired' });
+  }
+});
+
 export default router;
