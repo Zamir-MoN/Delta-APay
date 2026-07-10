@@ -33,25 +33,44 @@ export async function fetchUnreadEmails() {
       const messageData = await gmail.users.messages.get({
         userId: 'me',
         id: msg.id,
-        format: 'full', // or 'raw'
+        format: 'full', 
       });
 
-      // Extract body snippet or full text depending on payload
-      const snippet = messageData.data.snippet || "";
-      // In a real scenario, you'd decode the base64 body from payload.parts
-      // For simplicity, let's assume we decode it here:
-      let bodyData = snippet; 
-      
+      let bodyData = messageData.data.snippet || ""; 
       const payload = messageData.data.payload;
-      if (payload?.parts) {
-         for (const part of payload.parts) {
-            if (part.mimeType === 'text/plain' && part.body?.data) {
-               bodyData = Buffer.from(part.body.data, 'base64').toString('utf-8');
-               break;
+      
+      function getPartData(parts: any[], mimeType: string): string {
+         for (const part of parts) {
+            if (part.mimeType === mimeType && part.body?.data) {
+               return Buffer.from(part.body.data, 'base64').toString('utf-8');
+            }
+            if (part.parts) {
+               const found = getPartData(part.parts, mimeType);
+               if (found) return found;
             }
          }
+         return '';
+      }
+
+      let html = '';
+      let plain = '';
+      
+      if (payload?.parts) {
+         html = getPartData(payload.parts, 'text/html');
+         plain = getPartData(payload.parts, 'text/plain');
       } else if (payload?.body?.data) {
-         bodyData = Buffer.from(payload.body.data, 'base64').toString('utf-8');
+         if (payload.mimeType === 'text/html') {
+             html = Buffer.from(payload.body.data, 'base64').toString('utf-8');
+         } else {
+             plain = Buffer.from(payload.body.data, 'base64').toString('utf-8');
+         }
+      }
+
+      if (html) {
+         // Simply strip HTML tags and replace with newlines
+         bodyData = html.replace(/<[^>]*>?/gm, '\n');
+      } else if (plain) {
+         bodyData = plain;
       }
 
       const parsedData = parseFamAppEmail(bodyData);
@@ -65,14 +84,7 @@ export async function fetchUnreadEmails() {
         data: { messageId: msg.id }
       });
 
-      // Optionally, mark as read in Gmail
-      await gmail.users.messages.modify({
-        userId: 'me',
-        id: msg.id,
-        requestBody: {
-          removeLabelIds: ['UNREAD']
-        }
-      });
+      // NOTE: Intentionally removed gmail.modify to prevent 403 Forbidden Error
     }
   } catch (error) {
     console.error('Error fetching emails:', error);

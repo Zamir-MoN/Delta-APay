@@ -8,6 +8,9 @@ export interface ParsedEmailData {
 }
 
 export function parseFamAppEmail(text: string): ParsedEmailData | null {
+  console.log("---- RAW EMAIL TEXT TO PARSE ----");
+  console.log(text);
+  console.log("---------------------------------");
   try {
     // Clean text to handle possible HTML spacing issues
     const cleanText = text.replace(/\r\n/g, '\n');
