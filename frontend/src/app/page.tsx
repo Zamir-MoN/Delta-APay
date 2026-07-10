@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "current-gsap" // I will fix the import later if needed, actually it's just 'gsap'
+import gsap from "gsap";
 import { ArrowRight, ShieldCheck, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -24,10 +24,10 @@ export default function Home() {
   const handleBuy = async () => {
     // In a real app we would pick a product id
     try {
-      const res = await fetch("http://localhost:3001/api/orders", {
+      const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: 299, productId: "test-product-id" }),
+        body: JSON.stringify({ amount: 1, productId: "test-product-id" }),
       });
       const data = await res.json();
       if (data.order?.id) {
@@ -57,7 +57,7 @@ export default function Home() {
             onClick={handleBuy}
             className="group relative px-8 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-opacity-90 transition-all flex items-center gap-2 shadow-[0_0_30px_rgba(79,70,229,0.3)] hover:shadow-[0_0_40px_rgba(79,70,229,0.5)]"
           >
-            Buy Sample Product - ₹299
+            Buy Sample Product - ₹1
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>

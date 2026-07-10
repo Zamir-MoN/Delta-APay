@@ -21,7 +21,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     if (!orderId) return;
 
     // Connect to SSE for real-time status updates
-    const eventSource = new EventSource(`http://localhost:3001/api/orders/${orderId}/status`);
+    const eventSource = new EventSource(`/api/orders/${orderId}/status`);
     
     eventSource.onmessage = (event) => {
       try {
