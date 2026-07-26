@@ -44,6 +44,27 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     };
   }, [orderId]);
 
+  // Fallback Polling (in case Next.js Proxy buffers SSE)
+  useEffect(() => {
+    if (!orderId || status !== "PENDING") return;
+    
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/orders/${orderId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.status && data.status !== status) {
+            setStatus(data.status);
+          }
+        }
+      } catch (err) {
+        console.error("Polling error", err);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [orderId, status]);
+
   const handleConfirm = async () => {
     if (!utr.trim()) {
       setFeedback({ type: 'error', message: "Please enter a valid UTR or UPI Transfer ID" });
@@ -61,7 +82,12 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
       });
       const data = await res.json();
       
-      if (data.error) {
+      if (data.error === 'Order is no longer pending') {
+        // Force a status check
+        const statusRes = await fetch(`/api/orders/${orderId}`);
+        const statusData = await statusRes.json();
+        if (statusData.status) setStatus(statusData.status);
+      } else if (data.error) {
         setFeedback({ type: 'error', message: data.error });
       } else if (data.pending) {
         setFeedback({ type: 'success', message: "UTR submitted. Waiting for bank confirmation..." });
