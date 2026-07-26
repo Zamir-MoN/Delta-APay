@@ -94,8 +94,8 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
       } else {
         // Will be picked up by SSE
       }
-    } catch (err) {
-      setFeedback({ type: 'error', message: "Failed to verify payment" });
+    } catch (err: any) {
+      setFeedback({ type: 'error', message: `Crash: ${err.message || String(err)}` });
     } finally {
       setSubmitting(false);
     }
