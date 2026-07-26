@@ -126,8 +126,7 @@ router.post('/orders/:id/confirm', async (req, res) => {
     
     if (transaction) {
       if (transaction.orderId) {
-        console.log('Reusing UTR for testing...');
-        // return res.status(400).json({ error: 'This UTR has already been used for another order' });
+        return res.status(400).json({ error: 'This UTR has already been used for another order' });
       }
       
       if (transaction.amount !== order.amount) {
