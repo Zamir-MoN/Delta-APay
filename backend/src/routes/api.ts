@@ -15,6 +15,11 @@ function generatePurpose() {
   return result;
 }
 
+// Diagnostic ping route
+router.get('/ping', (req, res) => {
+  res.json({ message: 'pong', backendPort: process.env.PORT || 3005 });
+});
+
 // Create Order
 router.post('/orders', async (req, res) => {
   try {
