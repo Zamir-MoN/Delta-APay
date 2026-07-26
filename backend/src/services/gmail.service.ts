@@ -93,8 +93,8 @@ export async function fetchUnreadEmails() {
 
 export function startGmailCron() {
   if (process.env.ENABLE_CRON === 'true') {
-     console.log('Starting Gmail Polling Cron Job (every 20 seconds)');
-     cron.schedule('*/20 * * * * *', () => {
+     console.log('Starting Gmail Polling Cron Job (every 5 seconds)');
+     cron.schedule('*/5 * * * * *', () => {
        fetchUnreadEmails();
      });
   }
