@@ -22,8 +22,8 @@ app.get('/', (req, res) => {
   res.send('Delta X Tool Backend Running');
 });
 
-const server = app.listen(port, () => {
+const server = app.listen(port as number, '0.0.0.0', () => {
   const address = server.address();
   const actualPort = typeof address === 'string' ? address : address?.port;
-  console.log(`Server listening on port ${actualPort}`);
+  console.log(`Server listening on port ${actualPort} (0.0.0.0)`);
 });
