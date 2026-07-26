@@ -80,7 +80,14 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ utr: utr.trim() }),
       });
-      const data = await res.json();
+      
+      const text = await res.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e: any) {
+        throw new Error(`Status ${res.status}: ${text.substring(0, 100)}`);
+      }
       
       if (data.error === 'Order is no longer pending') {
         // Force a status check
