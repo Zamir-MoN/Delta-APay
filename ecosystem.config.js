@@ -7,7 +7,7 @@ module.exports = {
       cwd: './backend',
       env: {
         NODE_ENV: 'production',
-        PORT: 3001,
+        PORT: 3005,
         // Add your production DB and GMAIL variables here or in .env
       }
     },
