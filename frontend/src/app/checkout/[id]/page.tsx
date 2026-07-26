@@ -130,16 +130,6 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
                 <p className="text-3xl font-bold text-white">₹{amount}</p>
               </div>
               
-              <div className="glass p-3 rounded-lg flex items-center justify-between">
-                <span className="text-sm text-secondary-text">Purpose Code</span>
-                <span className="font-mono text-accent font-semibold">{purpose}</span>
-              </div>
-              
-              <div className="flex items-center justify-center gap-2 text-primary font-medium mt-6">
-                <Clock size={18} className="animate-pulse" />
-                Expires in {formatTime(timeLeft)}
-              </div>
-              
               <div className="mt-6 flex flex-col gap-3">
                 <input 
                   type="text" 
