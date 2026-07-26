@@ -60,6 +60,19 @@ router.post('/orders', async (req, res) => {
   }
 });
 
+// Get Order Status
+router.get('/orders/:id', async (req, res) => {
+  try {
+    const order = await prisma.order.findUnique({ where: { id: req.params.id } });
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    res.json({ status: order.status, amount: order.amount, purpose: order.purpose });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // SSE endpoint for order status
 router.get('/orders/:id/status', async (req, res) => {
   const orderId = req.params.id;
