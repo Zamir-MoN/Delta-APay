@@ -15,7 +15,6 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   const purpose = searchParams.get("purpose");
 
   const [status, setStatus] = useState<string>("PENDING");
-  const [timeLeft, setTimeLeft] = useState(300); // 5 mins
   const [utr, setUtr] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{type: 'error' | 'success', message: string} | null>(null);
@@ -44,29 +43,6 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
       eventSource.close();
     };
   }, [orderId]);
-
-  useEffect(() => {
-    if (status !== "PENDING") return;
-    
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          setStatus("EXPIRED");
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [status]);
-
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
-  };
 
   const handleConfirm = async () => {
     if (!utr.trim()) {

@@ -43,17 +43,6 @@ export async function processPaymentEmail(data: ParsedEmailData) {
       return false;
     }
 
-    const now = new Date();
-    if (now > pendingOrder.expiresAt) {
-      console.log(`[Verification] Order ${pendingOrder.id} has expired.`);
-      await prisma.order.update({
-        where: { id: pendingOrder.id },
-        data: { status: "EXPIRED" }
-      });
-      orderEventEmitter.emit("statusChanged", pendingOrder.id, "EXPIRED");
-      return false;
-    }
-
     // 4. Payment Success - Match found
     await prisma.$transaction(async (tx) => {
       await tx.transaction.update({

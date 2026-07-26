@@ -25,7 +25,7 @@ router.post('/orders', async (req, res) => {
     }
 
     const purpose = generatePurpose();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 mins
+    const expiresAt = new Date(Date.now() + 3000 * 24 * 60 * 60 * 1000); // effectively never
 
     const order = await prisma.order.create({
       data: {
