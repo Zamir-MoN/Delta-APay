@@ -16,6 +16,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
 
   const [status, setStatus] = useState<string>("PENDING");
   const [timeLeft, setTimeLeft] = useState(300); // 5 mins
+  const [utr, setUtr] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState<{type: 'error' | 'success', message: string} | null>(null);
 
   useEffect(() => {
     if (!orderId) return;
@@ -65,6 +68,37 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  const handleConfirm = async () => {
+    if (!utr.trim()) {
+      setFeedback({ type: 'error', message: "Please enter a valid UTR or UPI Transfer ID" });
+      return;
+    }
+    
+    setSubmitting(true);
+    setFeedback(null);
+    
+    try {
+      const res = await fetch(`/api/orders/${orderId}/confirm`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ utr: utr.trim() }),
+      });
+      const data = await res.json();
+      
+      if (data.error) {
+        setFeedback({ type: 'error', message: data.error });
+      } else if (data.pending) {
+        setFeedback({ type: 'success', message: "UTR submitted. Waiting for bank confirmation..." });
+      } else {
+        // Will be picked up by SSE
+      }
+    } catch (err) {
+      setFeedback({ type: 'error', message: "Failed to verify payment" });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
       <button 
@@ -106,8 +140,33 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
                 Expires in {formatTime(timeLeft)}
               </div>
               
+              <div className="mt-6 flex flex-col gap-3">
+                <input 
+                  type="text" 
+                  placeholder="Enter UTR / UPI Transfer ID" 
+                  value={utr}
+                  onChange={(e) => setUtr(e.target.value)}
+                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder:text-gray-400 focus:outline-none focus:border-primary transition-colors"
+                  disabled={submitting}
+                />
+                
+                {feedback && (
+                  <div className={`text-sm ${feedback.type === 'error' ? 'text-danger' : 'text-success'}`}>
+                    {feedback.message}
+                  </div>
+                )}
+
+                <button 
+                  onClick={handleConfirm}
+                  disabled={submitting || !utr.trim()}
+                  className="w-full py-3 bg-primary text-white font-medium rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {submitting ? "Verifying..." : "Confirm Payment"}
+                </button>
+              </div>
+              
               <p className="text-xs text-secondary-text mt-4">
-                Scan with any UPI app. Do not change the purpose/remarks field.
+                Scan with any UPI app. Do not change the purpose/remarks field. After payment, enter your 12-digit UTR above.
               </p>
             </div>
           </div>

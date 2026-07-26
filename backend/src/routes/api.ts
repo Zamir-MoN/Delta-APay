@@ -84,6 +84,66 @@ router.get('/orders/:id/status', async (req, res) => {
 
 import { processPaymentEmail } from '../services/verification.service';
 
+// Confirm Payment via UTR
+router.post('/orders/:id/confirm', async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const { utr } = req.body;
+
+    if (!utr) {
+      return res.status(400).json({ error: 'UTR is required' });
+    }
+
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    if (order.status !== 'PENDING') {
+      return res.status(400).json({ error: 'Order is no longer pending' });
+    }
+
+    // Check if UTR exists in Transaction table
+    const transaction = await prisma.transaction.findUnique({ where: { utr } });
+    
+    if (transaction) {
+      if (transaction.orderId) {
+        return res.status(400).json({ error: 'This UTR has already been used for another order' });
+      }
+      
+      if (transaction.amount !== order.amount) {
+        return res.status(400).json({ error: `Amount mismatch. Expected ${order.amount}, got ${transaction.amount}` });
+      }
+      
+      // Match found and valid! Complete order immediately.
+      await prisma.$transaction(async (tx) => {
+        await tx.transaction.update({
+          where: { id: transaction.id },
+          data: { orderId: order.id }
+        });
+
+        await tx.order.update({
+          where: { id: order.id },
+          data: { status: "PAID", submittedUtr: utr }
+        });
+      });
+
+      orderEventEmitter.emit("statusChanged", order.id, "PAID");
+      return res.json({ success: true, message: 'Payment verified successfully!' });
+    } else {
+      // Transaction doesn't exist yet (email delayed). Just save UTR.
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { submittedUtr: utr }
+      });
+      return res.json({ success: true, pending: true, message: 'UTR saved. Waiting for bank confirmation.' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Simulate Payment Verification (For Testing)
 router.post('/simulate', async (req, res) => {
   const { purpose, amount, utr, sender } = req.body;

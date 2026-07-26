@@ -10,34 +10,32 @@ export async function processPaymentEmail(data: ParsedEmailData) {
     });
 
     if (existingTransaction) {
-      console.log(`[Verification] Duplicate UTR detected: ${data.utr}. Ignoring.`);
+      console.log(`[Verification] Duplicate UTR detected in email: ${data.utr}. Ignoring.`);
       return false; // Already processed
     }
 
-    // 2. Find Pending order with exact Purpose and Amount
-    let pendingOrder = await prisma.order.findFirst({
+    // 2. Save the Transaction unconditionally
+    const transaction = await prisma.transaction.create({
+      data: {
+        utr: data.utr,
+        amount: data.amount,
+        transactionId: data.transactionId,
+        sender: data.sender,
+        date: data.date,
+      }
+    });
+
+    // 3. Find Pending order that submitted this exact UTR
+    const pendingOrder = await prisma.order.findFirst({
       where: {
-        purpose: data.purpose,
+        submittedUtr: data.utr,
         status: "PENDING",
       }
     });
 
-    // FAMAPP FIX: If FamApp overrides the purpose with "UPI", fallback to Amount-based matching
-    if (!pendingOrder && data.purpose === 'UPI') {
-      console.log(`[Verification] Purpose stripped by FamApp. Fallback matching by amount: ₹${data.amount}`);
-      pendingOrder = await prisma.order.findFirst({
-        where: {
-          amount: data.amount,
-          status: "PENDING",
-          expiresAt: { gt: new Date() } // Only match orders that are still active!
-        },
-        orderBy: { createdAt: 'desc' } // Newest pending first
-      });
-    }
-
     if (!pendingOrder) {
-      console.log(`[Verification] No pending order found for purpose: ${data.purpose} or amount: ${data.amount}`);
-      return false;
+      console.log(`[Verification] No pending order has claimed UTR: ${data.utr} yet. Saved transaction for future matching.`);
+      return true; // Return true because email was parsed and saved successfully
     }
 
     if (pendingOrder.amount !== data.amount) {
@@ -56,17 +54,11 @@ export async function processPaymentEmail(data: ParsedEmailData) {
       return false;
     }
 
-    // 3. Payment Success - Transaction complete
+    // 4. Payment Success - Match found
     await prisma.$transaction(async (tx) => {
-      await tx.transaction.create({
-        data: {
-          utr: data.utr,
-          amount: data.amount,
-          transactionId: data.transactionId,
-          sender: data.sender,
-          date: data.date,
-          orderId: pendingOrder.id,
-        }
+      await tx.transaction.update({
+        where: { id: transaction.id },
+        data: { orderId: pendingOrder.id }
       });
 
       await tx.order.update({
