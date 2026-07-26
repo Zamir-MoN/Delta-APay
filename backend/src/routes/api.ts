@@ -36,7 +36,7 @@ router.post('/orders', async (req, res) => {
       }
     });
 
-    const upiUri = `upi://pay?pa=20-delta-mondal@fam&pn=Delta%20X&am=${amount}&tn=${purpose}`;
+    const upiUri = `upi://pay?pa=20-delta-mondal@fam&pn=Delta%20X&am=${amount}&tn=${purpose}&tr=${purpose}&cu=INR`;
     const qrCodeDataUrl = await QRCode.toDataURL(upiUri, {
       color: {
         dark: '#ffffff',

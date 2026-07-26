@@ -15,15 +15,28 @@ export async function processPaymentEmail(data: ParsedEmailData) {
     }
 
     // 2. Find Pending order with exact Purpose and Amount
-    const pendingOrder = await prisma.order.findFirst({
+    let pendingOrder = await prisma.order.findFirst({
       where: {
         purpose: data.purpose,
         status: "PENDING",
       }
     });
 
+    // FAMAPP FIX: If FamApp overrides the purpose with "UPI", fallback to Amount-based matching
+    if (!pendingOrder && data.purpose === 'UPI') {
+      console.log(`[Verification] Purpose stripped by FamApp. Fallback matching by amount: ₹${data.amount}`);
+      pendingOrder = await prisma.order.findFirst({
+        where: {
+          amount: data.amount,
+          status: "PENDING",
+          expiresAt: { gt: new Date() } // Only match orders that are still active!
+        },
+        orderBy: { createdAt: 'desc' } // Newest pending first
+      });
+    }
+
     if (!pendingOrder) {
-      console.log(`[Verification] No pending order found for purpose: ${data.purpose}`);
+      console.log(`[Verification] No pending order found for purpose: ${data.purpose} or amount: ${data.amount}`);
       return false;
     }
 

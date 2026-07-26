@@ -4,9 +4,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import apiRoutes from './routes/api';
+import { startGmailCron } from './services/gmail.service';
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 0;
+
+// Start the cron job if enabled
+startGmailCron();
 
 app.use(cors());
 app.use(express.json());
@@ -18,6 +22,8 @@ app.get('/', (req, res) => {
   res.send('Delta X Tool Backend Running');
 });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+const server = app.listen(port, () => {
+  const address = server.address();
+  const actualPort = typeof address === 'string' ? address : address?.port;
+  console.log(`Server listening on port ${actualPort}`);
 });
