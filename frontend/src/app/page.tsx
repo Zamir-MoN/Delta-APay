@@ -8,6 +8,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
+  const [testAmount, setTestAmount] = useState<number>(1);
   
   const [dashboardData, setDashboardData] = useState<any>(null);
   const [orders, setOrders] = useState<any[]>([]);
@@ -71,7 +72,7 @@ export default function Home() {
           'x-api-key': dashboardData?.apiKey || ''
         },
         body: JSON.stringify({
-          amount: 1, // Test amount
+          amount: testAmount, // Test amount
           metadata: 'TEST-ORDER'
         })
       });
@@ -178,10 +179,20 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-black/40 p-3 rounded-lg font-mono text-sm border border-white/10 w-full gap-3">
               <span className="opacity-80 break-all">{dashboardData?.apiKey || 'Loading...'}</span>
-              <div className="flex gap-2 w-full sm:w-auto">
+              <div className="flex gap-2 w-full sm:w-auto items-center">
+                <div className="flex items-center bg-white/5 rounded px-2 py-1 border border-white/10">
+                  <span className="text-xs text-secondary-text mr-1">₹</span>
+                  <input 
+                    type="number" 
+                    value={testAmount}
+                    onChange={(e) => setTestAmount(Number(e.target.value) || 1)}
+                    className="bg-transparent border-none outline-none text-xs w-12 text-white font-mono"
+                    min="1"
+                  />
+                </div>
                 <button 
                   onClick={handleTestPayment}
-                  className="px-4 py-1.5 bg-primary/20 text-primary hover:bg-primary/30 rounded transition-colors text-xs font-bold"
+                  className="px-4 py-1.5 bg-primary/20 text-primary hover:bg-primary/30 rounded transition-colors text-xs font-bold whitespace-nowrap"
                 >
                   Test Gateway
                 </button>
