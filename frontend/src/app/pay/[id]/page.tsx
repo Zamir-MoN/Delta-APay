@@ -197,8 +197,11 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
 
         {status === "PAID" && (
           <div className="flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-4 duration-500 py-12">
-            <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-6 shadow-inner border border-green-100">
-              <CheckCircle2 size={48} className="text-green-500" />
+            <div className="mb-6">
+              <svg className="success-checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle className="success-circle" cx="26" cy="26" r="25" fill="none"/>
+                <path className="success-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+              </svg>
             </div>
             <h3 className="text-2xl font-extrabold text-gray-900 mb-2">Payment Successful!</h3>
             {orderDetails.redirectUrl ? (
