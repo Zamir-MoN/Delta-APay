@@ -13,10 +13,14 @@
 }
 
 body {
-  background-color: transparent;
+  background-color: #09090B;
   color: var(--color-text);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+}
+
+body.transparent-bg {
+  background-color: transparent !important;
 }
 
 /* Glassmorphism utilities */

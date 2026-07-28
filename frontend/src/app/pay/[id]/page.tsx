@@ -25,6 +25,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   const [feedback, setFeedback] = useState<{type: 'error' | 'success', message: string} | null>(null);
 
   useEffect(() => {
+    // Enable transparent background globally for the payment page so it can be embedded cleanly
+    document.body.classList.add('transparent-bg');
+
     if (!orderId) return;
 
     // Fetch Initial Details
@@ -56,6 +59,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
 
     return () => {
       eventSource.close();
+      document.body.classList.remove('transparent-bg');
     };
   }, [orderId]);
 
