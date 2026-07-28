@@ -125,45 +125,68 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   };
 
   if (!orderDetails) {
-    return <div className="flex min-h-screen items-center justify-center text-white">Loading payment details...</div>;
+    return <div className="flex min-h-screen items-center justify-center text-secondary-text">Loading payment details...</div>;
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
-      <div className="glass-panel p-8 md:p-12 rounded-3xl w-full max-w-md relative overflow-hidden">
-        {/* Glow effect */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-primary/20 blur-[50px] -z-10 rounded-full" />
+    <div className="flex flex-col items-center justify-center min-h-[90vh] px-4 py-12">
+      <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden border border-gray-100">
         
-        <h2 className="text-2xl font-bold text-center mb-6">Complete Payment</h2>
+        {/* Header - Razorpay Style */}
+        <div className="flex justify-center items-center mb-6">
+          <div className="text-[#0c47a1] font-extrabold text-2xl tracking-tight flex items-center">
+            <span className="text-[#1976d2] italic mr-1 text-3xl leading-none">/</span>
+            <span className="text-[#1976d2] italic mr-1.5 text-3xl leading-none">/</span>
+            Delta<span className="text-[#1976d2]">Pay</span>
+          </div>
+        </div>
         
         {status === "PENDING" && (
           <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
-            <div className="bg-white p-4 rounded-xl mb-6">
+            
+            <div className="mb-4">
               {orderDetails.qrCode ? (
-                <img src={orderDetails.qrCode} alt="UPI QR Code" className="w-48 h-48" />
+                <img src={orderDetails.qrCode} alt="UPI QR Code" className="w-56 h-56" />
               ) : (
-                <div className="w-48 h-48 bg-gray-200 animate-pulse rounded-xl" />
+                <div className="w-56 h-56 bg-gray-100 animate-pulse rounded-xl" />
               )}
+            </div>
+            
+            {/* Mock UPI App Logos */}
+            <div className="flex justify-center items-center gap-5 mb-8 w-full border-b border-gray-100 pb-6">
+              {/* Paytm */}
+              <div className="text-[#00baf2] font-extrabold text-sm tracking-tighter">Pay<span className="text-[#002970]">tm</span></div>
+              {/* GPay */}
+              <div className="flex items-center gap-[1px]">
+                <span className="text-[#4285F4] font-bold text-sm">G</span>
+                <span className="text-[#EA4335] font-bold text-sm">P</span>
+                <span className="text-[#FBBC05] font-bold text-sm">a</span>
+                <span className="text-[#34A853] font-bold text-sm">y</span>
+              </div>
+              {/* BHIM */}
+              <div className="text-[#F18121] font-bold text-sm tracking-tighter">BHIM</div>
+              {/* PhonePe */}
+              <div className="bg-[#5f259f] text-white rounded-full w-6 h-6 flex items-center justify-center text-[11px] font-bold">पे</div>
             </div>
             
             <div className="w-full space-y-4 text-center">
               <div>
-                <p className="text-secondary-text text-sm mb-1">Amount to Pay</p>
-                <p className="text-3xl font-bold text-white">₹{orderDetails.amount}</p>
+                <p className="text-gray-500 text-sm font-medium mb-1">Amount to Pay</p>
+                <p className="text-4xl font-extrabold text-gray-900">₹{orderDetails.amount}</p>
               </div>
               
-              <div className="mt-6 flex flex-col gap-3">
+              <div className="mt-8 flex flex-col gap-3">
                 <input 
                   type="text" 
-                  placeholder="Enter UTR / UPI Transfer ID" 
+                  placeholder="Enter 12-digit UTR Number" 
                   value={utr}
                   onChange={(e) => setUtr(e.target.value)}
-                  className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder:text-gray-400 focus:outline-none focus:border-primary transition-colors"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#1976d2] focus:ring-1 focus:ring-[#1976d2] transition-all font-medium text-center"
                   disabled={submitting}
                 />
                 
                 {feedback && (
-                  <div className={`text-sm ${feedback.type === 'error' ? 'text-danger' : 'text-success'}`}>
+                  <div className={`text-sm font-medium ${feedback.type === 'error' ? 'text-red-500' : 'text-green-600'}`}>
                     {feedback.message}
                   </div>
                 )}
@@ -171,35 +194,35 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
                 <button 
                   onClick={handleConfirm}
                   disabled={submitting || !utr.trim()}
-                  className="w-full py-3 bg-primary text-white font-medium rounded-xl hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3.5 bg-[#0c47a1] text-white font-bold rounded-xl hover:bg-[#0a387f] shadow-lg shadow-blue-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
                 >
                   {submitting ? "Verifying..." : "Confirm Payment"}
                 </button>
               </div>
               
-              <p className="text-xs text-secondary-text mt-4">
-                Scan with any UPI app. Do not change the purpose/remarks field. After payment, enter your 12-digit UTR above.
+              <p className="text-xs text-gray-400 mt-4 leading-relaxed">
+                Scan with any UPI app. Do not change the purpose/remarks field. After payment, enter your UTR above.
               </p>
             </div>
           </div>
         )}
 
         {status === "PAID" && (
-          <div className="flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-4 duration-500 py-8">
-            <div className="w-20 h-20 bg-success/20 rounded-full flex items-center justify-center mb-6">
-              <CheckCircle2 size={40} className="text-success" />
+          <div className="flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-4 duration-500 py-12">
+            <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-6">
+              <CheckCircle2 size={48} className="text-green-500" />
             </div>
-            <h3 className="text-2xl font-bold mb-2">Payment Successful!</h3>
+            <h3 className="text-2xl font-extrabold text-gray-900 mb-2">Payment Successful!</h3>
             {orderDetails.redirectUrl ? (
-              <p className="text-secondary-text mb-8">Redirecting you back to the app in 3 seconds...</p>
+              <p className="text-gray-500 mb-8 font-medium">Redirecting you back to the app...</p>
             ) : (
-              <p className="text-secondary-text mb-8">Your payment is verified.</p>
+              <p className="text-gray-500 mb-8 font-medium">Your payment has been verified.</p>
             )}
             
             {orderDetails.redirectUrl && (
                <button 
                  onClick={() => window.location.href = orderDetails.redirectUrl}
-                 className="w-full py-3 bg-primary text-white font-medium rounded-xl hover:bg-opacity-90 transition-all"
+                 className="w-full py-3.5 bg-[#0c47a1] text-white font-bold rounded-xl hover:bg-[#0a387f] shadow-lg transition-all"
                >
                  Continue Now
                </button>
@@ -208,12 +231,12 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
         )}
 
         {status === "EXPIRED" && (
-          <div className="flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-4 duration-500 py-8">
-            <div className="w-20 h-20 bg-danger/20 rounded-full flex items-center justify-center mb-6">
-              <XCircle size={40} className="text-danger" />
+          <div className="flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-4 duration-500 py-12">
+            <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6">
+              <XCircle size={48} className="text-red-500" />
             </div>
-            <h3 className="text-2xl font-bold mb-2">Payment Expired</h3>
-            <p className="text-secondary-text mb-8">This QR code is no longer valid. Please create a new order.</p>
+            <h3 className="text-2xl font-extrabold text-gray-900 mb-2">Payment Expired</h3>
+            <p className="text-gray-500 font-medium">This QR code is no longer valid. Please create a new order.</p>
           </div>
         )}
       </div>
