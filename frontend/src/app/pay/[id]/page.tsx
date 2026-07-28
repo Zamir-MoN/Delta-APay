@@ -21,6 +21,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [status, setStatus] = useState<string>("PENDING");
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const isCancelling = React.useRef(false);
   const [utr, setUtr] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{type: 'error' | 'success', message: string} | null>(null);
@@ -104,10 +105,10 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     window.history.pushState(null, '', window.location.href);
 
     const handlePopState = () => {
-      if (status === "PENDING") {
+      if (status === "PENDING" && !isCancelling.current) {
         // Trap the user again immediately by pushing state
         window.history.pushState(null, '', window.location.href);
-        // Show our custom UI dialog instead of blocked window.confirm
+        // Show our custom UI dialog
         setShowCancelDialog(true);
       }
     };
@@ -160,21 +161,23 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   };
 
   const handleCancel = async () => {
-    // Hide the dialog if it was open
+    // Hide the dialog
     setShowCancelDialog(false);
+    isCancelling.current = true; // Disable the back-button trap
     
     try {
       setSubmitting(true);
-      await fetch(`/api/orders/${orderId}/cancel`, { method: 'POST' });
-      // The SSE will automatically pick up the EXPIRED status
+      // Optimistically update the UI to avoid being trapped by old state
+      setStatus("EXPIRED");
       
-      // If we got here via the back button dialog, let them go back
-      if (showCancelDialog) {
-        window.history.back();
-      }
+      await fetch(`/api/orders/${orderId}/cancel`, { method: 'POST' });
+      // The SSE will also confirm this, but we optimistically updated it
+      
     } catch (err) {
       setFeedback({ type: 'error', message: 'Failed to cancel payment' });
       setSubmitting(false);
+      isCancelling.current = false;
+      setStatus("PENDING"); // Revert
     }
   };
 
