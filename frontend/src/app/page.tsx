@@ -122,12 +122,28 @@ export default function Home() {
         {/* Header */}
         <div className="flex justify-between items-center glass-panel p-6 rounded-2xl">
           <div>
-            <h1 className="text-3xl font-bold">Dashboard</h1>
+            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
             <p className="text-secondary-text">Welcome back, {dashboardData?.email}</p>
           </div>
           <button onClick={handleLogout} className="flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors">
             <LogOut size={18} /> Logout
           </button>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="glass-panel p-6 rounded-2xl">
+            <h3 className="text-secondary-text mb-2">Total Revenue</h3>
+            <p className="text-3xl font-bold text-success">₹{dashboardData?.totalRevenue?.toLocaleString('en-IN') || '0'}</p>
+          </div>
+          <div className="glass-panel p-6 rounded-2xl">
+            <h3 className="text-secondary-text mb-2">Pending Orders</h3>
+            <p className="text-3xl font-bold text-accent">{dashboardData?.pendingCount || '0'}</p>
+          </div>
+          <div className="glass-panel p-6 rounded-2xl">
+            <h3 className="text-secondary-text mb-2">Completed Orders</h3>
+            <p className="text-3xl font-bold text-white">{dashboardData?.paidCount || '0'}</p>
+          </div>
         </div>
 
         {/* API Key Section */}

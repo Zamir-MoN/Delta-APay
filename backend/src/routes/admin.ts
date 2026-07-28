@@ -43,7 +43,26 @@ router.use(async (req, res, next) => {
 // Get Admin stats and API Key
 router.get('/me', async (req, res) => {
   const user = (req as any).user;
-  res.json({ apiKey: user.apiKey, email: user.email });
+  
+  try {
+    const paidOrders = await prisma.order.aggregate({
+      _sum: { amount: true },
+      where: { status: 'PAID' }
+    });
+    
+    const pendingCount = await prisma.order.count({ where: { status: 'PENDING' } });
+    const paidCount = await prisma.order.count({ where: { status: 'PAID' } });
+
+    res.json({ 
+      apiKey: user.apiKey, 
+      email: user.email,
+      totalRevenue: paidOrders._sum.amount || 0,
+      pendingCount,
+      paidCount
+    });
+  } catch (error) {
+    res.json({ apiKey: user.apiKey, email: user.email, totalRevenue: 0, pendingCount: 0, paidCount: 0 });
+  }
 });
 
 // Get recent orders
