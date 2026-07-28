@@ -95,6 +95,32 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     }
   }, [status, orderDetails]);
 
+  useEffect(() => {
+    // Intercept back button to prompt cancellation
+    if (status !== "PENDING") return;
+
+    // Push a dummy state so there's something to pop
+    window.history.pushState(null, '', window.location.href);
+
+    const handlePopState = () => {
+      if (status === "PENDING") {
+        const confirmCancel = window.confirm("Are you sure you want to cancel this payment?");
+        if (confirmCancel) {
+          // Trigger cancellation in the background
+          fetch(`/api/orders/${orderId}/cancel`, { method: 'POST' }).catch(() => {});
+          // Navigate back again to actually leave the page
+          window.history.back();
+        } else {
+          // Trap the user again if they said no
+          window.history.pushState(null, '', window.location.href);
+        }
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [status, orderId]);
+
   const handleConfirm = async () => {
     if (!utr.trim()) {
       setFeedback({ type: 'error', message: "Please enter a valid UTR or UPI Transfer ID" });
