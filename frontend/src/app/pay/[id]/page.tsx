@@ -232,7 +232,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
             
             {orderDetails.redirectUrl && (
                <button 
-                 onClick={() => window.location.href = orderDetails.redirectUrl}
+                 onClick={() => window.location.href = orderDetails.redirectUrl as string}
                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-[0_8px_20px_rgba(37,99,235,0.2)] transition-all active:scale-[0.98]"
                >
                  Continue Now
