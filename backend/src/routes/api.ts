@@ -94,7 +94,8 @@ router.post('/v1/checkout/sessions', async (req, res) => {
     });
 
     // Provide a checkout URL pointing to the frontend
-    const checkoutUrl = `http://localhost:4005/pay/${order.id}`;
+    const frontendUrl = process.env.FRONTEND_URL || (req.headers.origin ? req.headers.origin : 'http://localhost:4005');
+    const checkoutUrl = `${frontendUrl}/pay/${order.id}`;
 
     res.json({
       success: true,

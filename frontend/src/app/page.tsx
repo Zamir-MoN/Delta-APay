@@ -76,8 +76,8 @@ export default function Home() {
         })
       });
       const data = await response.json();
-      if (data.success && data.checkoutUrl) {
-        window.open(data.checkoutUrl, '_blank');
+      if (data.success && data.orderId) {
+        window.open(`/pay/${data.orderId}`, '_blank');
       } else {
         alert(data.error || 'Failed to create test session');
       }
