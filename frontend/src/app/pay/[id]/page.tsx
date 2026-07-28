@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Clock, XCircle, ArrowLeft } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, ArrowLeft, X } from "lucide-react";
 
 interface OrderDetails {
   status: string;
@@ -138,6 +138,19 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     }
   };
 
+  const handleCancel = async () => {
+    if (window.confirm("Are you sure you want to cancel this payment?")) {
+      try {
+        setSubmitting(true);
+        await fetch(`/api/orders/${orderId}/cancel`, { method: 'POST' });
+        // The SSE will automatically pick up the EXPIRED status
+      } catch (err) {
+        setFeedback({ type: 'error', message: 'Failed to cancel payment' });
+        setSubmitting(false);
+      }
+    }
+  };
+
   if (!orderDetails) {
     return <div className="flex min-h-screen items-center justify-center text-secondary-text">Loading payment details...</div>;
   }
@@ -146,6 +159,16 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-6 bg-transparent">
       <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.12)] w-full max-w-sm relative overflow-hidden border border-gray-200">
         
+        {status === "PENDING" && (
+          <button 
+            onClick={handleCancel}
+            className="absolute top-5 right-5 text-gray-400 hover:text-red-500 transition-colors bg-gray-50 hover:bg-red-50 p-2 rounded-full z-10"
+            title="Cancel Payment"
+          >
+            <X size={20} />
+          </button>
+        )}
+
         {/* Header - Premium Style */}
         <div className="flex justify-center items-center mb-5">
           <div className="font-extrabold text-2xl tracking-tight flex items-center text-gray-900">
