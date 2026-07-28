@@ -62,6 +62,30 @@ export default function Home() {
     }
   };
 
+  const handleTestPayment = async () => {
+    try {
+      const response = await fetch("/api/v1/checkout/sessions", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': dashboardData?.apiKey || ''
+        },
+        body: JSON.stringify({
+          amount: 1, // Test amount
+          metadata: 'TEST-ORDER'
+        })
+      });
+      const data = await response.json();
+      if (data.success && data.checkoutUrl) {
+        window.open(data.checkoutUrl, '_blank');
+      } else {
+        alert(data.error || 'Failed to create test session');
+      }
+    } catch (err) {
+      alert('Error creating test session');
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("adminToken");
     setIsLoggedIn(false);
@@ -152,16 +176,23 @@ export default function Home() {
             <Zap size={20} className="text-accent" /> Your Integration API Key
           </h3>
           <div className="flex items-center gap-4">
-            <code className="bg-white/5 px-4 py-3 rounded-xl flex-1 border border-white/10 font-mono text-primary truncate">
-              {dashboardData?.apiKey || 'Loading...'}
-            </code>
-            <button 
-              onClick={() => copyToClipboard(dashboardData?.apiKey)}
-              className="p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
-              title="Copy API Key"
-            >
-              <Copy size={20} />
-            </button>
+            <div className="flex items-center justify-between bg-black/40 p-3 rounded-lg font-mono text-sm border border-white/10 flex-1">
+              <span className="opacity-80 truncate">{dashboardData?.apiKey || 'Loading...'}</span>
+              <div className="flex gap-3">
+                <button 
+                  onClick={handleTestPayment}
+                  className="px-4 py-1.5 bg-primary/20 text-primary hover:bg-primary/30 rounded transition-colors text-xs font-bold"
+                >
+                  Test Gateway
+                </button>
+                <button 
+                  onClick={() => copyToClipboard(dashboardData?.apiKey)}
+                  className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded transition-colors text-xs flex items-center gap-2"
+                >
+                  <Copy size={14} /> Copy
+                </button>
+              </div>
+            </div>
           </div>
           <p className="text-sm text-secondary-text mt-4">
             Use this key in the <code>x-api-key</code> header to create checkout sessions from your external projects via <code>POST /api/v1/checkout/sessions</code>.
