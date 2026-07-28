@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         <SmoothScroll>
-          <div className="min-h-screen bg-background text-text flex flex-col">
+          <div className="min-h-screen bg-transparent text-text flex flex-col">
 
             <main className="flex-grow">
               {children}
