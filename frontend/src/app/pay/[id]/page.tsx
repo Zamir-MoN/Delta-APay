@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Clock, XCircle, ArrowLeft, X, Hexagon } from "lucide-react";
 
@@ -21,7 +21,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [status, setStatus] = useState<string>("PENDING");
   const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const isCancelling = React.useRef(false);
+  const isCancelling = useRef(false);
   const [utr, setUtr] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{type: 'error' | 'success', message: string} | null>(null);
