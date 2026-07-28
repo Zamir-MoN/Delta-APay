@@ -20,6 +20,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   
   const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [status, setStatus] = useState<string>("PENDING");
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [utr, setUtr] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{type: 'error' | 'success', message: string} | null>(null);
@@ -96,7 +97,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   }, [status, orderDetails]);
 
   useEffect(() => {
-    // Intercept back button to prompt cancellation
+    // Intercept back button to prompt cancellation with a custom UI modal (since mobile browsers block native confirm inside popstate)
     if (status !== "PENDING") return;
 
     // Push a dummy state so there's something to pop
@@ -104,16 +105,10 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
 
     const handlePopState = () => {
       if (status === "PENDING") {
-        const confirmCancel = window.confirm("Are you sure you want to cancel this payment?");
-        if (confirmCancel) {
-          // Trigger cancellation in the background
-          fetch(`/api/orders/${orderId}/cancel`, { method: 'POST' }).catch(() => {});
-          // Navigate back again to actually leave the page
-          window.history.back();
-        } else {
-          // Trap the user again if they said no
-          window.history.pushState(null, '', window.location.href);
-        }
+        // Trap the user again immediately by pushing state
+        window.history.pushState(null, '', window.location.href);
+        // Show our custom UI dialog instead of blocked window.confirm
+        setShowCancelDialog(true);
       }
     };
 
@@ -165,16 +160,26 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   };
 
   const handleCancel = async () => {
-    if (window.confirm("Are you sure you want to cancel this payment?")) {
-      try {
-        setSubmitting(true);
-        await fetch(`/api/orders/${orderId}/cancel`, { method: 'POST' });
-        // The SSE will automatically pick up the EXPIRED status
-      } catch (err) {
-        setFeedback({ type: 'error', message: 'Failed to cancel payment' });
-        setSubmitting(false);
+    // Hide the dialog if it was open
+    setShowCancelDialog(false);
+    
+    try {
+      setSubmitting(true);
+      await fetch(`/api/orders/${orderId}/cancel`, { method: 'POST' });
+      // The SSE will automatically pick up the EXPIRED status
+      
+      // If we got here via the back button dialog, let them go back
+      if (showCancelDialog) {
+        window.history.back();
       }
+    } catch (err) {
+      setFeedback({ type: 'error', message: 'Failed to cancel payment' });
+      setSubmitting(false);
     }
+  };
+
+  const promptCancel = () => {
+    setShowCancelDialog(true);
   };
 
   if (!orderDetails) {
@@ -185,9 +190,34 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-6 bg-transparent">
       <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.12)] w-full max-w-sm relative overflow-hidden border border-gray-200">
         
+        {/* Custom Cancel Dialog Modal */}
+        {showCancelDialog && (
+          <div className="absolute inset-0 bg-white/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mb-4 border border-red-100">
+              <XCircle size={32} className="text-red-500" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2 text-center">Cancel Payment?</h3>
+            <p className="text-sm text-gray-500 text-center mb-6">Are you sure you want to cancel this transaction? The order will be marked as expired.</p>
+            <div className="flex gap-3 w-full">
+              <button 
+                onClick={() => setShowCancelDialog(false)}
+                className="flex-1 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-colors text-sm"
+              >
+                No, Keep it
+              </button>
+              <button 
+                onClick={handleCancel}
+                className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors text-sm shadow-[0_4px_14px_rgba(239,68,68,0.3)]"
+              >
+                Yes, Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
         {status === "PENDING" && (
           <button 
-            onClick={handleCancel}
+            onClick={promptCancel}
             className="absolute top-5 right-5 text-gray-400 hover:text-red-500 transition-colors bg-gray-50 hover:bg-red-50 p-2 rounded-full z-10"
             title="Cancel Payment"
           >
