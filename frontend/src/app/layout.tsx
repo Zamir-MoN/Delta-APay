@@ -20,14 +20,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <SmoothScroll>
           <div className="min-h-screen bg-background text-text flex flex-col">
-            <nav className="w-full glass-panel py-4 px-6 flex justify-between items-center sticky top-0 z-50">
-              <div className="font-bold text-xl tracking-tighter text-white">
-                DELTA<span className="text-primary">X</span>
-              </div>
-              <div className="flex gap-4">
-                <a href="/" className="text-sm font-medium hover:text-accent transition-colors">Home</a>
-              </div>
-            </nav>
+
             <main className="flex-grow">
               {children}
             </main>
