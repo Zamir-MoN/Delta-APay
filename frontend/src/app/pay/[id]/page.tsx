@@ -130,7 +130,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-6 bg-transparent">
-      <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] w-full max-w-sm relative overflow-hidden border border-gray-100">
+      <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.12)] w-full max-w-sm relative overflow-hidden border border-gray-200">
         
         {/* Header - Premium Style */}
         <div className="flex justify-center items-center mb-5">
