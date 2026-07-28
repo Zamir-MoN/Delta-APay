@@ -152,21 +152,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
               )}
             </div>
             
-            {/* Mock UPI App Logos */}
-            <div className="flex justify-center items-center gap-6 mb-8 w-full border-b border-gray-100/80 pb-8">
-              {/* Paytm */}
-              <div className="text-[#00baf2] font-black text-[15px] tracking-tight">Pay<span className="text-[#002970]">tm</span></div>
-              {/* GPay */}
-              <div className="flex items-center tracking-tighter">
-                <span className="text-gray-500 font-medium text-[15px] mr-[1px]">G</span>
-                <span className="text-[#4285F4] font-bold text-[15px]">P</span>
-                <span className="text-[#EA4335] font-bold text-[15px]">a</span>
-                <span className="text-[#FBBC05] font-bold text-[15px]">y</span>
-              </div>
-              {/* PhonePe */}
-              <div className="bg-[#5f259f] text-white rounded-md w-6 h-6 flex items-center justify-center text-[12px] font-bold shadow-sm">पे</div>
-              {/* BHIM */}
-              <div className="text-[#F18121] font-bold text-[14px] tracking-tighter">BHIM</div>
+            {/* UPI App Logos Image */}
+            <div className="flex justify-center items-center mb-8 w-full border-b border-gray-100/80 pb-6 px-4">
+              <img src="/UPI-apps.avif" alt="Supported UPI Apps" className="max-w-full h-auto max-h-12 object-contain" />
             </div>
             
             <div className="w-full space-y-4 text-center">
