@@ -5,39 +5,53 @@ const router = Router();
 
 // Simple Login (Auto-creates owner if it doesn't exist)
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  
-  if (email === 'zamir' && password === 'zamir') {
-    let user = await prisma.user.findUnique({ where: { email: 'zamir' } });
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          email: 'zamir',
-          password: 'zamir', // In production, hash this!
-          role: 'OWNER'
-        }
-      });
+  try {
+    const { email, password } = req.body;
+    
+    if (email === 'zamir' && password === 'zamir') {
+      let user = await prisma.user.findUnique({ where: { email: 'zamir' } });
+      if (!user) {
+        user = await prisma.user.create({
+          data: {
+            email: 'zamir',
+            password: 'zamir', // In production, hash this!
+            role: 'OWNER'
+          }
+        });
+      }
+      
+      // We'll use the API key as a simple auth token for the dashboard
+      return res.json({ success: true, token: user.apiKey });
     }
     
-    // We'll use the API key as a simple auth token for the dashboard
-    return res.json({ success: true, token: user.apiKey });
+    res.status(401).json({ error: 'Invalid credentials' });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Server error' });
   }
-  
-  res.status(401).json({ error: 'Invalid credentials' });
 });
 
 // Middleware to protect admin routes
 router.use(async (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'Unauthorized' });
-  
-  const user = await prisma.user.findUnique({ where: { apiKey: token } });
-  if (!user || user.role !== 'OWNER') {
-    return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    
+    const user = await prisma.user.findUnique({ where: { apiKey: token } });
+    if (!user || user.role !== 'OWNER') {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    
+    (req as any).user = user;
+    next();
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+    res.status(500).json({ error: 'Server error' });
   }
-  
-  (req as any).user = user;
-  next();
 });
 
 // Get Admin stats and API Key

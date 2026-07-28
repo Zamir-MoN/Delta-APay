@@ -178,10 +178,14 @@ router.get('/orders/:id/status', async (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
-  // Send initial status
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
-  if (order) {
-    res.write(`data: ${JSON.stringify({ status: order.status })}\n\n`);
+  try {
+    // Send initial status
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (order) {
+      res.write(`data: ${JSON.stringify({ status: order.status })}\n\n`);
+    }
+  } catch (error) {
+    console.error('SSE initial status error:', error);
   }
 
   const listener = (updatedOrderId: string, status: string) => {
