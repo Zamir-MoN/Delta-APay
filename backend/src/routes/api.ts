@@ -2,6 +2,14 @@ import { Router } from 'express';
 import { prisma } from '../utils/prisma.util';
 import { EventEmitter } from 'events';
 import QRCode from 'qrcode';
+import crypto from 'crypto';
+import rateLimit from 'express-rate-limit';
+
+const confirmLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 confirm requests per window
+  message: { error: 'Too many UTR submission attempts, please try again later' }
+});
 
 const router = Router();
 export const orderEventEmitter = new EventEmitter();
@@ -63,7 +71,7 @@ router.post('/orders', async (req, res) => {
 // API Gateway: Create Checkout Session
 router.post('/v1/checkout/sessions', async (req, res) => {
   try {
-    const apiKey = req.headers['x-api-key'];
+    const apiKey = req.headers['x-api-key'] as string | undefined;
     if (!apiKey) {
       return res.status(401).json({ error: 'Missing x-api-key header' });
     }
@@ -94,7 +102,7 @@ router.post('/v1/checkout/sessions', async (req, res) => {
     });
 
     // Provide a checkout URL pointing to the frontend
-    const frontendUrl = process.env.FRONTEND_URL || (req.headers.origin ? req.headers.origin : 'http://localhost:4005');
+    const frontendUrl = process.env.FRONTEND_URL || (req.headers.origin ? (req.headers.origin as string) : 'http://localhost:4005');
     const checkoutUrl = `${frontendUrl}/pay/${order.id}`;
 
     res.json({
@@ -169,13 +177,13 @@ router.get('/orders/:id/status', async (req, res) => {
 import { processPaymentEmail } from '../services/verification.service';
 
 // Confirm Payment via UTR
-router.post('/orders/:id/confirm', async (req, res) => {
+router.post('/orders/:id/confirm', confirmLimiter, async (req, res) => {
   try {
-    const orderId = req.params.id;
+    const orderId = req.params.id as string;
     const { utr } = req.body;
 
-    if (!utr) {
-      return res.status(400).json({ error: 'UTR is required' });
+    if (!utr || typeof utr !== 'string' || !/^\d{12}$/.test(utr)) {
+      return res.status(400).json({ error: 'Valid 12-digit UTR is required' });
     }
 
     const order = await prisma.order.findUnique({ where: { id: orderId } });
@@ -192,8 +200,7 @@ router.post('/orders/:id/confirm', async (req, res) => {
     
     if (transaction) {
       if (transaction.orderId) {
-        // TEMPORARILY DISABLED: Allow UTR reuse for testing
-        // return res.status(400).json({ error: 'This UTR has already been used for another order' });
+        return res.status(400).json({ error: 'This UTR has already been used for another order' });
       }
       
       if (transaction.amount !== order.amount) {
@@ -217,16 +224,26 @@ router.post('/orders/:id/confirm', async (req, res) => {
 
       // Trigger webhook if provided
       if (order.webhookUrl) {
-        fetch(order.webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+        const owner = await prisma.user.findFirst({ where: { role: 'OWNER' } });
+        if (owner) {
+          const payload = JSON.stringify({
             orderId: order.id,
             status: "PAID",
             amount: order.amount,
             metadata: order.metadata
-          })
-        }).catch(err => console.error("Webhook trigger failed:", err));
+          });
+          
+          const signature = crypto.createHmac('sha256', owner.apiKey).update(payload).digest('hex');
+
+          fetch(order.webhookUrl, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'x-webhook-signature': signature
+            },
+            body: payload
+          }).catch(err => console.error("Webhook trigger failed:", err));
+        }
       }
 
       return res.json({ success: true, message: 'Payment verified successfully!' });
@@ -244,27 +261,6 @@ router.post('/orders/:id/confirm', async (req, res) => {
   }
 });
 
-// Simulate Payment Verification (For Testing)
-router.post('/simulate', async (req, res) => {
-  const { purpose, amount, utr, sender } = req.body;
-  if (!purpose || !amount || !utr) {
-    return res.status(400).json({ error: 'Missing parameters' });
-  }
 
-  const success = await processPaymentEmail({
-    purpose,
-    amount: parseFloat(amount),
-    utr,
-    transactionId: `TEST-${Date.now()}`,
-    sender: sender || 'Test User',
-    date: new Date().toISOString()
-  });
-
-  if (success) {
-    res.json({ success: true, message: 'Order verified successfully' });
-  } else {
-    res.status(400).json({ success: false, error: 'Order not found, already processed, or expired' });
-  }
-});
 
 export default router;
