@@ -162,14 +162,29 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
               )}
             </div>
 
-            {/* Mobile UPI Intent Link */}
+            {/* Mobile UPI Intent Links (Grid Style) */}
             {orderDetails.upiUri && (
-              <a 
-                href={orderDetails.upiUri}
-                className="mb-4 w-full md:hidden py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-700 shadow-lg transition-all active:scale-[0.98] text-sm text-center flex items-center justify-center gap-2"
-              >
-                <span>Pay via UPI App</span>
-              </a>
+              <div className="mb-6 w-full md:hidden">
+                <p className="text-[13px] font-semibold text-gray-500 mb-3 text-left pl-1">All Payment Options</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <a href={orderDetails.upiUri} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center bg-blue-50 text-blue-600 font-bold text-[10px]">G</div>
+                    <span className="text-sm font-semibold text-gray-700">Google Pay</span>
+                  </a>
+                  <a href={orderDetails.upiUri} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center bg-purple-50 text-purple-600 font-bold text-[10px]">P</div>
+                    <span className="text-sm font-semibold text-gray-700">PhonePe</span>
+                  </a>
+                  <a href={orderDetails.upiUri} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center bg-sky-50 text-sky-600 font-bold text-[10px]">P</div>
+                    <span className="text-sm font-semibold text-gray-700">PayTM</span>
+                  </a>
+                  <a href={orderDetails.upiUri} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center bg-gray-50 text-gray-600 font-bold text-[12px] pb-1">...</div>
+                    <span className="text-sm font-semibold text-gray-700">Other Apps</span>
+                  </a>
+                </div>
+              </div>
             )}
             
             {/* UPI App Logos Image */}
