@@ -160,7 +160,8 @@ export default function Home() {
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-secondary-text uppercase bg-white/5 sticky top-0">
                   <tr>
-                    <th className="px-4 py-3 rounded-tl-lg">ID / Purpose</th>
+                    <th className="px-4 py-3 rounded-tl-lg">Date</th>
+                    <th className="px-4 py-3">ID / Purpose</th>
                     <th className="px-4 py-3">Amount</th>
                     <th className="px-4 py-3 rounded-tr-lg">Status</th>
                   </tr>
@@ -168,6 +169,9 @@ export default function Home() {
                 <tbody>
                   {orders.map((order) => (
                     <tr key={order.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                      <td className="px-4 py-3 text-secondary-text text-xs whitespace-nowrap">
+                        {new Date(order.createdAt).toLocaleString()}
+                      </td>
                       <td className="px-4 py-3 font-mono text-xs">{order.purpose}</td>
                       <td className="px-4 py-3 font-medium">₹{order.amount}</td>
                       <td className="px-4 py-3">
@@ -182,7 +186,7 @@ export default function Home() {
                     </tr>
                   ))}
                   {orders.length === 0 && (
-                    <tr><td colSpan={3} className="px-4 py-8 text-center text-secondary-text">No orders yet</td></tr>
+                    <tr><td colSpan={4} className="px-4 py-8 text-center text-secondary-text">No orders yet</td></tr>
                   )}
                 </tbody>
               </table>
@@ -196,7 +200,8 @@ export default function Home() {
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-secondary-text uppercase bg-white/5 sticky top-0">
                   <tr>
-                    <th className="px-4 py-3 rounded-tl-lg">UTR</th>
+                    <th className="px-4 py-3 rounded-tl-lg">Date</th>
+                    <th className="px-4 py-3">UTR</th>
                     <th className="px-4 py-3">Amount</th>
                     <th className="px-4 py-3 rounded-tr-lg">Sender</th>
                   </tr>
@@ -204,13 +209,16 @@ export default function Home() {
                 <tbody>
                   {transactions.map((tx) => (
                     <tr key={tx.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                      <td className="px-4 py-3 text-secondary-text text-xs whitespace-nowrap">
+                        {new Date(tx.createdAt).toLocaleString()}
+                      </td>
                       <td className="px-4 py-3 font-mono text-xs">{tx.utr}</td>
                       <td className="px-4 py-3 font-medium">₹{tx.amount}</td>
                       <td className="px-4 py-3 truncate max-w-[150px]">{tx.sender}</td>
                     </tr>
                   ))}
                   {transactions.length === 0 && (
-                    <tr><td colSpan={3} className="px-4 py-8 text-center text-secondary-text">No transactions parsed yet</td></tr>
+                    <tr><td colSpan={4} className="px-4 py-8 text-center text-secondary-text">No transactions parsed yet</td></tr>
                   )}
                 </tbody>
               </table>
