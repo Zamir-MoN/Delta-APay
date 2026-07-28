@@ -233,13 +233,17 @@ export default function Home() {
                       <td className="px-4 py-3 font-mono text-xs">{order.purpose}</td>
                       <td className="px-4 py-3 font-medium">₹{order.amount}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          order.status === 'PAID' ? 'bg-success/20 text-success' : 
-                          order.status === 'EXPIRED' ? 'bg-danger/20 text-danger' : 
-                          'bg-accent/20 text-accent'
-                        }`}>
+                        <button 
+                          onClick={() => window.open(`/pay/${order.id}`, '_blank')}
+                          className={`px-2 py-1 rounded text-xs font-semibold hover:opacity-80 transition-opacity cursor-pointer shadow-sm active:scale-95 ${
+                            order.status === 'PAID' ? 'bg-success/20 text-success' : 
+                            order.status === 'EXPIRED' ? 'bg-danger/20 text-danger' : 
+                            'bg-accent/20 text-accent'
+                          }`}
+                          title="Open Payment Page"
+                        >
                           {order.status}
-                        </span>
+                        </button>
                       </td>
                     </tr>
                   ))}
