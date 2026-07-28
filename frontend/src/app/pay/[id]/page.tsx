@@ -171,19 +171,19 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
               <div className="mb-6 w-full md:hidden">
                 <p className="text-[13px] font-semibold text-gray-500 mb-3 text-left pl-1">All Payment Options</p>
                 <div className="grid grid-cols-2 gap-3">
-                  <a href={orderDetails.upiUri.replace('upi://pay', 'gpay://upi/pay')} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
+                  <a href={`${orderDetails.upiUri}&mode=04`.replace('upi://pay', 'gpay://upi/pay')} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
                     <img src="/google_pay.png" alt="Google Pay" className="w-8 h-8 object-contain" />
                     <span className="text-sm font-semibold text-gray-700">Google Pay</span>
                   </a>
-                  <a href={orderDetails.upiUri.replace('upi://pay', 'phonepe://pay')} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
+                  <a href={`${orderDetails.upiUri}&mode=04`.replace('upi://pay', 'phonepe://pay')} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
                     <img src="/phone_pay.png" alt="PhonePe" className="w-8 h-8 object-contain" />
                     <span className="text-sm font-semibold text-gray-700">PhonePe</span>
                   </a>
-                  <a href={orderDetails.upiUri.replace('upi://pay', 'paytmmp://pay')} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
+                  <a href={`${orderDetails.upiUri}&mode=04`.replace('upi://pay', 'paytmmp://pay')} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
                     <img src="/paytem.png" alt="PayTM" className="w-8 h-8 object-contain" />
                     <span className="text-sm font-semibold text-gray-700">PayTM</span>
                   </a>
-                  <a href={orderDetails.upiUri} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
+                  <a href={`${orderDetails.upiUri}&mode=04`} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
                     <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-50 text-gray-600 font-bold text-[14px] pb-1">...</div>
                     <span className="text-sm font-semibold text-gray-700">Other Apps</span>
                   </a>
