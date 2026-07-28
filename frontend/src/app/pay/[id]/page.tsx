@@ -168,15 +168,15 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
                 <p className="text-[13px] font-semibold text-gray-500 mb-3 text-left pl-1">All Payment Options</p>
                 <div className="grid grid-cols-2 gap-3">
                   <a href={orderDetails.upiUri.replace('upi://pay', 'gpay://upi/pay')} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center bg-blue-50 text-blue-600 font-bold text-[10px]">G</div>
+                    <img src="/google_pay.png" alt="Google Pay" className="w-6 h-6 object-contain" />
                     <span className="text-sm font-semibold text-gray-700">Google Pay</span>
                   </a>
                   <a href={orderDetails.upiUri.replace('upi://pay', 'phonepe://pay')} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center bg-purple-50 text-purple-600 font-bold text-[10px]">P</div>
+                    <img src="/phone_pay.png" alt="PhonePe" className="w-6 h-6 object-contain" />
                     <span className="text-sm font-semibold text-gray-700">PhonePe</span>
                   </a>
                   <a href={orderDetails.upiUri.replace('upi://pay', 'paytmmp://pay')} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center bg-sky-50 text-sky-600 font-bold text-[10px]">P</div>
+                    <img src="/paytem.png" alt="PayTM" className="w-6 h-6 object-contain" />
                     <span className="text-sm font-semibold text-gray-700">PayTM</span>
                   </a>
                   <a href={orderDetails.upiUri} className="flex items-center gap-2 p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
