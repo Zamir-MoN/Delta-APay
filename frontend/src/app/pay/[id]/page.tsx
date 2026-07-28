@@ -229,7 +229,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
         <div className="flex justify-center items-center mb-5">
           <div className="font-extrabold text-2xl tracking-tight flex items-center text-gray-900">
             <span className="text-blue-600 italic mr-1 text-3xl font-black leading-none">/</span>
-            Delta<span className="text-blue-600 font-medium">Pay</span>
+            Bee<span className="text-blue-600 font-medium">Pay</span>
           </div>
         </div>
         
