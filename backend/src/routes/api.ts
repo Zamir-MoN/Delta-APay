@@ -126,7 +126,7 @@ router.get('/orders/:id', async (req, res) => {
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    const upiUri = `upi://pay?pa=20-delta-mondal@fam&pn=Delta%20X&am=${order.amount}&tn=${order.purpose}&tr=${order.purpose}&cu=INR`;
+    const upiUri = `upi://pay?pa=20-delta-mondal@fam&pn=Delta%20X&mc=0000&am=${order.amount}&tn=${order.purpose}&tr=${order.purpose}&cu=INR`;
     const qrCodeDataUrl = await QRCode.toDataURL(upiUri, {
       color: {
         dark: '#ffffff',
