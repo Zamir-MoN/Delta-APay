@@ -83,8 +83,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   useEffect(() => {
     // Handle Auto-redirect on success
     if (status === "PAID" && orderDetails?.redirectUrl) {
+      const redirectUrl = orderDetails.redirectUrl;
       const timer = setTimeout(() => {
-        window.location.href = orderDetails.redirectUrl;
+        window.location.href = redirectUrl;
       }, 3000);
       return () => clearTimeout(timer);
     }
