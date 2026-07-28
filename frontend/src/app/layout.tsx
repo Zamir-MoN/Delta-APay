@@ -26,7 +26,6 @@ export default function RootLayout({
               </div>
               <div className="flex gap-4">
                 <a href="/" className="text-sm font-medium hover:text-accent transition-colors">Home</a>
-                <a href="/dashboard" className="text-sm font-medium hover:text-accent transition-colors">Dashboard</a>
               </div>
             </nav>
             <main className="flex-grow">
