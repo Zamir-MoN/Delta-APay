@@ -4,12 +4,21 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Clock, XCircle, ArrowLeft } from "lucide-react";
 
+interface OrderDetails {
+  status: string;
+  amount: number;
+  purpose: string;
+  qrCode: string;
+  upiUri?: string;
+  redirectUrl?: string;
+}
+
 export default function CheckoutPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const resolvedParams = use(params);
   const orderId = resolvedParams.id;
   
-  const [orderDetails, setOrderDetails] = useState<any>(null);
+  const [orderDetails, setOrderDetails] = useState<OrderDetails | null>(null);
   const [status, setStatus] = useState<string>("PENDING");
   const [utr, setUtr] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -151,6 +160,16 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
                 <div className="w-44 h-44 bg-gray-50 animate-pulse rounded-xl" />
               )}
             </div>
+
+            {/* Mobile UPI Intent Link */}
+            {orderDetails.upiUri && (
+              <a 
+                href={orderDetails.upiUri}
+                className="mb-4 w-full md:hidden py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-xl hover:from-green-600 hover:to-emerald-700 shadow-lg transition-all active:scale-[0.98] text-sm text-center flex items-center justify-center gap-2"
+              >
+                <span>Pay via UPI App</span>
+              </a>
+            )}
             
             {/* UPI App Logos Image */}
             <div className="flex justify-center items-center mb-4 w-full border-b border-gray-100/80 pb-4">

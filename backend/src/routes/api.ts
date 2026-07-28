@@ -131,6 +131,7 @@ router.get('/orders/:id', async (req, res) => {
       amount: order.amount, 
       purpose: order.purpose,
       qrCode: qrCodeDataUrl,
+      upiUri: upiUri,
       redirectUrl: order.redirectUrl
     });
   } catch (error) {
