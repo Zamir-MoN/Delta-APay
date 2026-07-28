@@ -20,7 +20,7 @@ router.get('/ping', (req, res) => {
   res.json({ message: 'pong', backendPort: process.env.PORT || 3005 });
 });
 
-// Create Order
+// Create Order (Legacy)
 router.post('/orders', async (req, res) => {
   try {
     const { amount, productId } = req.body;
@@ -60,14 +60,78 @@ router.post('/orders', async (req, res) => {
   }
 });
 
-// Get Order Status
+// API Gateway: Create Checkout Session
+router.post('/v1/checkout/sessions', async (req, res) => {
+  try {
+    const apiKey = req.headers['x-api-key'];
+    if (!apiKey) {
+      return res.status(401).json({ error: 'Missing x-api-key header' });
+    }
+
+    const user = await prisma.user.findUnique({ where: { apiKey: apiKey as string } });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid API Key' });
+    }
+
+    const { amount, redirectUrl, webhookUrl, metadata } = req.body;
+
+    if (!amount || typeof amount !== 'number') {
+      return res.status(400).json({ error: 'Amount must be a number and is required' });
+    }
+
+    const purpose = generatePurpose();
+    const expiresAt = new Date(Date.now() + 1 * 60 * 60 * 1000); // 1 hour expiry
+
+    const order = await prisma.order.create({
+      data: {
+        amount,
+        purpose,
+        expiresAt,
+        redirectUrl,
+        webhookUrl,
+        metadata
+      }
+    });
+
+    // Provide a checkout URL pointing to the frontend
+    const checkoutUrl = `http://localhost:4005/pay/${order.id}`;
+
+    res.json({
+      success: true,
+      checkoutUrl,
+      orderId: order.id,
+      amount: order.amount,
+      expiresAt: order.expiresAt
+    });
+  } catch (error) {
+    console.error('Create checkout error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Get Order Status & Details
 router.get('/orders/:id', async (req, res) => {
   try {
     const order = await prisma.order.findUnique({ where: { id: req.params.id } });
     if (!order) {
       return res.status(404).json({ error: 'Order not found' });
     }
-    res.json({ status: order.status, amount: order.amount, purpose: order.purpose });
+
+    const upiUri = `upi://pay?pa=20-delta-mondal@fam&pn=Delta%20X&am=${order.amount}&tn=${order.purpose}&tr=${order.purpose}&cu=INR`;
+    const qrCodeDataUrl = await QRCode.toDataURL(upiUri, {
+      color: {
+        dark: '#ffffff',
+        light: '#09090b',
+      }
+    });
+
+    res.json({ 
+      status: order.status, 
+      amount: order.amount, 
+      purpose: order.purpose,
+      qrCode: qrCodeDataUrl,
+      redirectUrl: order.redirectUrl
+    });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -147,6 +211,21 @@ router.post('/orders/:id/confirm', async (req, res) => {
       });
 
       orderEventEmitter.emit("statusChanged", order.id, "PAID");
+
+      // Trigger webhook if provided
+      if (order.webhookUrl) {
+        fetch(order.webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: order.id,
+            status: "PAID",
+            amount: order.amount,
+            metadata: order.metadata
+          })
+        }).catch(err => console.error("Webhook trigger failed:", err));
+      }
+
       return res.json({ success: true, message: 'Payment verified successfully!' });
     } else {
       // Transaction doesn't exist yet (email delayed). Just save UTR.

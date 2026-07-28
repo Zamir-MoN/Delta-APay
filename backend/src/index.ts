@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import apiRoutes from './routes/api';
+import adminRoutes from './routes/admin';
 import { startGmailCron } from './services/gmail.service';
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api', apiRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/', (req, res) => {
   res.send('Delta X Tool Backend Running');
