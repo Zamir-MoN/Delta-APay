@@ -129,59 +129,59 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[90vh] px-4 py-12">
-      <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm relative overflow-hidden border border-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-[90vh] px-4 py-12 bg-gray-50/50 dark:bg-background">
+      <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] w-full max-w-sm relative overflow-hidden border border-gray-100">
         
-        {/* Header - Razorpay Style */}
-        <div className="flex justify-center items-center mb-6">
-          <div className="text-[#0c47a1] font-extrabold text-2xl tracking-tight flex items-center">
-            <span className="text-[#1976d2] italic mr-1 text-3xl leading-none">/</span>
-            <span className="text-[#1976d2] italic mr-1.5 text-3xl leading-none">/</span>
-            Delta<span className="text-[#1976d2]">Pay</span>
+        {/* Header - Premium Style */}
+        <div className="flex justify-center items-center mb-8">
+          <div className="font-extrabold text-2xl tracking-tight flex items-center text-gray-900">
+            <span className="text-blue-600 italic mr-1 text-3xl font-black leading-none">/</span>
+            Delta<span className="text-blue-600 font-medium">Pay</span>
           </div>
         </div>
         
         {status === "PENDING" && (
           <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
             
-            <div className="mb-4">
+            {/* QR Code with soft shadow */}
+            <div className="mb-6 p-2 bg-white rounded-2xl shadow-[0_0_0_1px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.04)]">
               {orderDetails.qrCode ? (
-                <img src={orderDetails.qrCode} alt="UPI QR Code" className="w-56 h-56" />
+                <img src={orderDetails.qrCode} alt="UPI QR Code" className="w-52 h-52 rounded-xl object-contain" />
               ) : (
-                <div className="w-56 h-56 bg-gray-100 animate-pulse rounded-xl" />
+                <div className="w-52 h-52 bg-gray-50 animate-pulse rounded-xl" />
               )}
             </div>
             
             {/* Mock UPI App Logos */}
-            <div className="flex justify-center items-center gap-5 mb-8 w-full border-b border-gray-100 pb-6">
+            <div className="flex justify-center items-center gap-6 mb-8 w-full border-b border-gray-100/80 pb-8">
               {/* Paytm */}
-              <div className="text-[#00baf2] font-extrabold text-sm tracking-tighter">Pay<span className="text-[#002970]">tm</span></div>
+              <div className="text-[#00baf2] font-black text-[15px] tracking-tight">Pay<span className="text-[#002970]">tm</span></div>
               {/* GPay */}
-              <div className="flex items-center gap-[1px]">
-                <span className="text-[#4285F4] font-bold text-sm">G</span>
-                <span className="text-[#EA4335] font-bold text-sm">P</span>
-                <span className="text-[#FBBC05] font-bold text-sm">a</span>
-                <span className="text-[#34A853] font-bold text-sm">y</span>
+              <div className="flex items-center tracking-tighter">
+                <span className="text-gray-500 font-medium text-[15px] mr-[1px]">G</span>
+                <span className="text-[#4285F4] font-bold text-[15px]">P</span>
+                <span className="text-[#EA4335] font-bold text-[15px]">a</span>
+                <span className="text-[#FBBC05] font-bold text-[15px]">y</span>
               </div>
-              {/* BHIM */}
-              <div className="text-[#F18121] font-bold text-sm tracking-tighter">BHIM</div>
               {/* PhonePe */}
-              <div className="bg-[#5f259f] text-white rounded-full w-6 h-6 flex items-center justify-center text-[11px] font-bold">पे</div>
+              <div className="bg-[#5f259f] text-white rounded-md w-6 h-6 flex items-center justify-center text-[12px] font-bold shadow-sm">पे</div>
+              {/* BHIM */}
+              <div className="text-[#F18121] font-bold text-[14px] tracking-tighter">BHIM</div>
             </div>
             
             <div className="w-full space-y-4 text-center">
               <div>
-                <p className="text-gray-500 text-sm font-medium mb-1">Amount to Pay</p>
-                <p className="text-4xl font-extrabold text-gray-900">₹{orderDetails.amount}</p>
+                <p className="text-gray-400 text-xs font-bold mb-1 uppercase tracking-widest">Amount to Pay</p>
+                <p className="text-5xl font-black text-gray-900 tracking-tight">₹{orderDetails.amount}</p>
               </div>
               
-              <div className="mt-8 flex flex-col gap-3">
+              <div className="mt-8 flex flex-col gap-4">
                 <input 
                   type="text" 
-                  placeholder="Enter 12-digit UTR Number" 
+                  placeholder="Enter 12-digit UTR" 
                   value={utr}
                   onChange={(e) => setUtr(e.target.value)}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#1976d2] focus:ring-1 focus:ring-[#1976d2] transition-all font-medium text-center"
+                  className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-semibold text-center tracking-widest shadow-inner"
                   disabled={submitting}
                 />
                 
@@ -194,13 +194,13 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
                 <button 
                   onClick={handleConfirm}
                   disabled={submitting || !utr.trim()}
-                  className="w-full py-3.5 bg-[#0c47a1] text-white font-bold rounded-xl hover:bg-[#0a387f] shadow-lg shadow-blue-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-[0_8px_20px_rgba(37,99,235,0.2)] transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
                 >
                   {submitting ? "Verifying..." : "Confirm Payment"}
                 </button>
               </div>
               
-              <p className="text-xs text-gray-400 mt-4 leading-relaxed">
+              <p className="text-[11px] text-gray-400 mt-6 leading-relaxed font-medium px-2">
                 Scan with any UPI app. Do not change the purpose/remarks field. After payment, enter your UTR above.
               </p>
             </div>
@@ -209,20 +209,20 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
 
         {status === "PAID" && (
           <div className="flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-4 duration-500 py-12">
-            <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-6">
+            <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-6 shadow-inner border border-green-100">
               <CheckCircle2 size={48} className="text-green-500" />
             </div>
             <h3 className="text-2xl font-extrabold text-gray-900 mb-2">Payment Successful!</h3>
             {orderDetails.redirectUrl ? (
               <p className="text-gray-500 mb-8 font-medium">Redirecting you back to the app...</p>
             ) : (
-              <p className="text-gray-500 mb-8 font-medium">Your payment has been verified.</p>
+              <p className="text-gray-500 mb-8 font-medium">Your payment has been verified securely.</p>
             )}
             
             {orderDetails.redirectUrl && (
                <button 
                  onClick={() => window.location.href = orderDetails.redirectUrl}
-                 className="w-full py-3.5 bg-[#0c47a1] text-white font-bold rounded-xl hover:bg-[#0a387f] shadow-lg transition-all"
+                 className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-[0_8px_20px_rgba(37,99,235,0.2)] transition-all active:scale-[0.98]"
                >
                  Continue Now
                </button>
@@ -232,7 +232,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
 
         {status === "EXPIRED" && (
           <div className="flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-4 duration-500 py-12">
-            <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6">
+            <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mb-6 shadow-inner border border-red-100">
               <XCircle size={48} className="text-red-500" />
             </div>
             <h3 className="text-2xl font-extrabold text-gray-900 mb-2">Payment Expired</h3>
