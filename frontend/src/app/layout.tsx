@@ -6,7 +6,7 @@ import SmoothScroll from "@/components/SmoothScroll";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Delta X Tool - Auto UPI Verification",
+  title: "Payment Page",
   description: "Seamless and instant UPI payment verification.",
 };
 
