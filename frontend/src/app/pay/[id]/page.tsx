@@ -129,11 +129,11 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[90vh] px-4 py-12 bg-gray-50/50 dark:bg-background">
-      <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] w-full max-w-sm relative overflow-hidden border border-gray-100">
+    <div className="flex flex-col items-center justify-center min-h-screen px-4 py-6 bg-gray-50/50 dark:bg-background">
+      <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] w-full max-w-sm relative overflow-hidden border border-gray-100">
         
         {/* Header - Premium Style */}
-        <div className="flex justify-center items-center mb-8">
+        <div className="flex justify-center items-center mb-5">
           <div className="font-extrabold text-2xl tracking-tight flex items-center text-gray-900">
             <span className="text-blue-600 italic mr-1 text-3xl font-black leading-none">/</span>
             Delta<span className="text-blue-600 font-medium">Pay</span>
@@ -144,37 +144,37 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
           <div className="flex flex-col items-center animate-in fade-in zoom-in duration-500">
             
             {/* QR Code with soft shadow */}
-            <div className="mb-6 p-2 bg-white rounded-2xl shadow-[0_0_0_1px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.04)]">
+            <div className="mb-4 p-2 bg-white rounded-2xl shadow-[0_0_0_1px_rgba(0,0,0,0.04),0_8px_16px_rgba(0,0,0,0.04)]">
               {orderDetails.qrCode ? (
-                <img src={orderDetails.qrCode} alt="UPI QR Code" className="w-52 h-52 rounded-xl object-contain" />
+                <img src={orderDetails.qrCode} alt="UPI QR Code" className="w-44 h-44 rounded-xl object-contain" />
               ) : (
-                <div className="w-52 h-52 bg-gray-50 animate-pulse rounded-xl" />
+                <div className="w-44 h-44 bg-gray-50 animate-pulse rounded-xl" />
               )}
             </div>
             
             {/* UPI App Logos Image */}
-            <div className="flex justify-center items-center mb-5 w-full border-b border-gray-100/80 pb-5 px-4">
-              <img src="/UPI-apps.avif" alt="Supported UPI Apps" className="max-w-full h-auto max-h-16 object-contain" />
+            <div className="flex justify-center items-center mb-4 w-full border-b border-gray-100/80 pb-4 px-4">
+              <img src="/UPI-apps.avif" alt="Supported UPI Apps" className="max-w-full h-auto max-h-12 object-contain" />
             </div>
             
-            <div className="w-full space-y-4 text-center">
+            <div className="w-full space-y-3 text-center">
               <div>
-                <p className="text-gray-400 text-xs font-bold mb-1 uppercase tracking-widest">Amount to Pay</p>
+                <p className="text-gray-400 text-[10px] font-bold mb-0.5 uppercase tracking-widest">Amount to Pay</p>
                 <p className="text-3xl font-black text-gray-900 tracking-tight">₹{orderDetails.amount}</p>
               </div>
               
-              <div className="mt-8 flex flex-col gap-4">
+              <div className="mt-4 flex flex-col gap-3">
                 <input 
                   type="text" 
                   placeholder="Enter 12-digit UTR" 
                   value={utr}
                   onChange={(e) => setUtr(e.target.value)}
-                  className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3.5 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-semibold text-center tracking-widest shadow-inner"
+                  className="w-full bg-gray-50/50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all font-semibold text-center tracking-widest shadow-inner text-sm"
                   disabled={submitting}
                 />
                 
                 {feedback && (
-                  <div className={`text-sm font-medium ${feedback.type === 'error' ? 'text-red-500' : 'text-green-600'}`}>
+                  <div className={`text-xs font-medium leading-tight ${feedback.type === 'error' ? 'text-red-500' : 'text-green-600'}`}>
                     {feedback.message}
                   </div>
                 )}
@@ -182,13 +182,13 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
                 <button 
                   onClick={handleConfirm}
                   disabled={submitting || !utr.trim()}
-                  className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-[0_8px_20px_rgba(37,99,235,0.2)] transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                  className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 shadow-[0_8px_20px_rgba(37,99,235,0.2)] transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none text-sm"
                 >
                   {submitting ? "Verifying..." : "Confirm Payment"}
                 </button>
               </div>
               
-              <p className="text-[11px] text-gray-400 mt-6 leading-relaxed font-medium px-2">
+              <p className="text-[10px] text-gray-400 mt-3 leading-tight font-medium px-2">
                 Scan with any UPI app. Do not change the purpose/remarks field. After payment, enter your UTR above.
               </p>
             </div>
