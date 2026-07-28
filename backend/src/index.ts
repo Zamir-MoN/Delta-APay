@@ -10,7 +10,7 @@ import adminRoutes from './routes/admin';
 import { startGmailCron } from './services/gmail.service';
 
 const app = express();
-const port = process.env.PORT || 0;
+const port = process.env.PORT || 3005;
 
 // Start the cron job if enabled
 startGmailCron();
