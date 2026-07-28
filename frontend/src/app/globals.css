@@ -16,7 +16,6 @@ body {
   background-color: #09090B;
   color: var(--color-text);
   font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
 }
 
 body.transparent-bg {

@@ -100,7 +100,7 @@ export default function Home() {
 
   if (!isLoggedIn) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-4 w-full absolute inset-0" style={{ backgroundColor: '#09090b', color: 'white' }}>
+      <div className="flex flex-col items-center justify-center min-h-screen px-4 w-full">
         <div className="glass-panel p-8 md:p-12 rounded-3xl w-full max-w-md mt-10">
           <div className="flex justify-center mb-6">
             <ShieldCheck size={48} className="text-primary" />
@@ -140,7 +140,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen px-4 py-12 w-full absolute inset-0 overflow-y-auto" style={{ backgroundColor: '#09090b', color: 'white' }}>
+    <div className="flex flex-col items-center justify-start min-h-screen px-4 py-12 w-full">
       <div className="w-full max-w-6xl space-y-8 mt-10">
         
         {/* Header */}
