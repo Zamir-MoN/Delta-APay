@@ -226,7 +226,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
         )}
 
         {/* Header - Premium Style */}
-        <div className="flex justify-center items-center mb-5">
+        <div className="flex justify-start items-center mb-5">
           <div className="font-extrabold text-2xl tracking-tight flex items-center text-gray-900 gap-1.5">
             <Hexagon size={28} className="text-amber-500 fill-amber-400 animate-bounce" />
             <span>Bee<span className="text-amber-500 font-medium">Pay</span></span>
