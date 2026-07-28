@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Clock, XCircle, ArrowLeft, X } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, ArrowLeft, X, Hexagon } from "lucide-react";
 
 interface OrderDetails {
   status: string;
@@ -227,9 +227,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
 
         {/* Header - Premium Style */}
         <div className="flex justify-center items-center mb-5">
-          <div className="font-extrabold text-2xl tracking-tight flex items-center text-gray-900">
-            <span className="text-blue-600 italic mr-1 text-3xl font-black leading-none">/</span>
-            Bee<span className="text-blue-600 font-medium">Pay</span>
+          <div className="font-extrabold text-2xl tracking-tight flex items-center text-gray-900 gap-1.5">
+            <Hexagon size={28} className="text-amber-500 fill-amber-400 animate-bounce" />
+            <span>Bee<span className="text-amber-500 font-medium">Pay</span></span>
           </div>
         </div>
         
