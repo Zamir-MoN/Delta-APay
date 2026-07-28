@@ -100,8 +100,8 @@ export default function Home() {
 
   if (!isLoggedIn) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[90vh] px-4">
-        <div className="glass-panel p-8 md:p-12 rounded-3xl w-full max-w-md">
+      <div className="flex flex-col items-center justify-center min-h-screen px-4 bg-[#09090b] text-white w-full absolute inset-0">
+        <div className="glass-panel p-8 md:p-12 rounded-3xl w-full max-w-md mt-10">
           <div className="flex justify-center mb-6">
             <ShieldCheck size={48} className="text-primary" />
           </div>
@@ -140,8 +140,8 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-[90vh] px-4 py-12">
-      <div className="w-full max-w-6xl space-y-8">
+    <div className="flex flex-col items-center justify-start min-h-screen px-4 py-12 bg-[#09090b] text-white w-full absolute inset-0 overflow-y-auto">
+      <div className="w-full max-w-6xl space-y-8 mt-10">
         
         {/* Header */}
         <div className="flex justify-between items-center glass-panel p-6 rounded-2xl">
@@ -175,10 +175,10 @@ export default function Home() {
           <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
             <Zap size={20} className="text-accent" /> Your Integration API Key
           </h3>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center justify-between bg-black/40 p-3 rounded-lg font-mono text-sm border border-white/10 flex-1">
-              <span className="opacity-80 truncate">{dashboardData?.apiKey || 'Loading...'}</span>
-              <div className="flex gap-3">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-black/40 p-3 rounded-lg font-mono text-sm border border-white/10 w-full gap-3">
+              <span className="opacity-80 break-all">{dashboardData?.apiKey || 'Loading...'}</span>
+              <div className="flex gap-2 w-full sm:w-auto">
                 <button 
                   onClick={handleTestPayment}
                   className="px-4 py-1.5 bg-primary/20 text-primary hover:bg-primary/30 rounded transition-colors text-xs font-bold"
@@ -199,12 +199,12 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-20">
           {/* Orders Table */}
-          <div className="glass-panel p-6 rounded-2xl overflow-hidden flex flex-col h-[500px]">
+          <div className="glass-panel p-6 rounded-2xl flex flex-col h-[500px]">
             <h3 className="text-xl font-bold mb-4">Recent Orders</h3>
-            <div className="flex-1 overflow-auto pr-2 custom-scrollbar">
-              <table className="w-full text-sm text-left">
+            <div className="flex-1 overflow-x-auto overflow-y-auto pr-2 custom-scrollbar">
+              <table className="w-full text-sm text-left min-w-[500px]">
                 <thead className="text-xs text-secondary-text uppercase bg-white/5 sticky top-0">
                   <tr>
                     <th className="px-4 py-3 rounded-tl-lg">Date</th>
@@ -241,10 +241,10 @@ export default function Home() {
           </div>
 
           {/* Transactions Table */}
-          <div className="glass-panel p-6 rounded-2xl overflow-hidden flex flex-col h-[500px]">
+          <div className="glass-panel p-6 rounded-2xl flex flex-col h-[500px]">
             <h3 className="text-xl font-bold mb-4">Parsed Transactions (FamApp)</h3>
-            <div className="flex-1 overflow-auto pr-2 custom-scrollbar">
-              <table className="w-full text-sm text-left">
+            <div className="flex-1 overflow-x-auto overflow-y-auto pr-2 custom-scrollbar">
+              <table className="w-full text-sm text-left min-w-[450px]">
                 <thead className="text-xs text-secondary-text uppercase bg-white/5 sticky top-0">
                   <tr>
                     <th className="px-4 py-3 rounded-tl-lg">Date</th>
