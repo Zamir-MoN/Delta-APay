@@ -248,7 +248,18 @@ router.post('/orders/:id/confirm', confirmLimiter, async (req, res) => {
 
       return res.json({ success: true, message: 'Payment verified successfully!' });
     } else {
-      // Transaction doesn't exist yet (email delayed). Just save UTR.
+      // Transaction doesn't exist yet (email delayed).
+      
+      // Check if another order has already claimed this UTR
+      const existingOrderWithUtr = await prisma.order.findFirst({
+        where: { submittedUtr: utr, id: { not: order.id } }
+      });
+      
+      if (existingOrderWithUtr) {
+        return res.status(400).json({ error: 'This UTR has already been claimed by another order' });
+      }
+
+      // Just save UTR for when the email arrives.
       await prisma.order.update({
         where: { id: order.id },
         data: { submittedUtr: utr }
