@@ -153,7 +153,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ id: string 
             </div>
             
             {/* UPI App Logos Image */}
-            <div className="flex justify-center items-center mb-8 w-full border-b border-gray-100/80 pb-6 px-4">
+            <div className="flex justify-center items-center mb-5 w-full border-b border-gray-100/80 pb-5 px-4">
               <img src="/UPI-apps.avif" alt="Supported UPI Apps" className="max-w-full h-auto max-h-16 object-contain" />
             </div>
             
